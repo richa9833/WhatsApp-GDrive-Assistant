@@ -26,6 +26,7 @@ The workflow uses:
 
 
 ##  Workflow Architecture
+```plaintext
 
 [Webhook]
    ↓
