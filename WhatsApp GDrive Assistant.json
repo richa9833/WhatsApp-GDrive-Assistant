@@ -1,0 +1,340 @@
+{
+  "name": "WhatsApp GDrive Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-command",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "11bb1bf2-a6d4-4fa4-86f7-453c41713f9b",
+      "name": "Webhook",
+      "webhookId": "ca3df54c-6b7d-4c25-bd9e-a98d4800efef"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  // Log for debugging in n8n\n  console.log(item.json);\n\n  // Try different possible paths\n  let bodyValue = \"\";\n  let fromValue = \"\";\n\n  if (typeof item.json.Body === \"string\") {\n    bodyValue = item.json.Body;\n  } else if (typeof item.json.body === \"string\") {\n    bodyValue = item.json.body;\n  } else if (item.json.body && typeof item.json.body.Body === \"string\") {\n    bodyValue = item.json.body.Body;\n  } else {\n    bodyValue = JSON.stringify(item.json.Body || item.json.body || \"\");\n  }\n\n  if (typeof item.json.From === \"string\") {\n    fromValue = item.json.From;\n  } else if (typeof item.json.from === \"string\") {\n    fromValue = item.json.from;\n  } else if (item.json.body && typeof item.json.body.From === \"string\") {\n    fromValue = item.json.body.From;\n  }\n\n  return {\n    json: {\n      message: String(bodyValue).trim().toLowerCase(),\n      sender: String(fromValue).replace(\"whatsapp:\", \"\")\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "cb20d613-9add-4883-9821-220cb73add8c",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json[\"message\"]}}",
+                    "rightValue": "list files",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "778c3378-9b0c-47ef-9bab-6786de507d33"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "51aa5fa8-789b-4a83-bcf5-4efda2f9524a",
+                    "leftValue": "={{$json[\"message\"]}}",
+                    "rightValue": "move file",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "02461d7a-8c83-4038-a3ea-bcec012564ff",
+                    "leftValue": "={{$json[\"message\"]}}",
+                    "rightValue": "delete file",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3c9dbe65-e6d5-4110-b13e-2b8016c57a1e",
+                    "leftValue": "={{$json[\"message\"]}}",
+                    "rightValue": "summarize file",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "7b271459-6ff2-4478-ad5c-f14365183071",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "filter": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        832,
+        -160
+      ],
+      "id": "222fe536-c680-4c85-adc0-841288731c6e",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "s8E4EKr6DnDKdUYd",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "from": "+14155238886",
+        "to": "+919306889833",
+        "toWhatsapp": true,
+        "message": "=Found folder:{{$json[\"name\"]}}           Folder ID:{{$json[\"id\"]}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        -160
+      ],
+      "id": "323f0dec-7fe0-4737-beb4-07368eaefafc",
+      "name": "Send an SMS/MMS/WhatsApp message",
+      "credentials": {
+        "twilioApi": {
+          "id": "FSbaLbF3BuSV8hzz",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        800,
+        32
+      ],
+      "id": "f1f9f1a8-3021-413d-9675-e3183e5fbdf5",
+      "name": "Move file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "s8E4EKr6DnDKdUYd",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteFile",
+        "fileId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        736,
+        176
+      ],
+      "id": "404c9f2e-c53a-4350-99ba-3811bb3c7ba6",
+      "name": "Delete a file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "s8E4EKr6DnDKdUYd",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Move file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Send an SMS/MMS/WhatsApp message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move file": {
+      "main": [
+        [
+          {
+            "node": "Send an SMS/MMS/WhatsApp message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a file": {
+      "main": [
+        [
+          {
+            "node": "Send an SMS/MMS/WhatsApp message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "10d1fde3-518e-4433-99de-e0cfba4fae00",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "28bc343f20ec6b078d9c58ce656e574dd6aed41db101913dbec3459a9f00349b"
+  },
+  "id": "2e0EvbExrBW9yhBN",
+  "tags": []
+}
