@@ -38,7 +38,11 @@ The workflow uses:
 1. Go to: [Google Cloud Console - Credentials](https://console.cloud.google.com/apis/credentials)
 2. Create an **OAuth 2.0 Client ID**.
 3. Enable **Google Drive API**.
-4. Set redirect URI to:
+4. Set redirect URI
+5. Save the following:
+- **Client ID**
+- **Client Secret**
+
 
 
 ##  Workflow Architecture
