@@ -24,6 +24,22 @@ The workflow uses:
 - **Google Drive API**
 - **OpenAI API (GPT-4o)**
 
+ ##  Setup Instructions
+### Twilio WhatsApp Sandbox
+1. Visit: [Twilio WhatsApp Sandbox](https://www.twilio.com/console/sms/whatsapp/sandbox)
+2. Join the sandbox by sending the **join keyword** to the Twilio number.
+3. Save the following credentials:
+   - **Account SID**
+   - **Auth Token**
+
+
+
+###  Google Drive API
+1. Go to: [Google Cloud Console - Credentials](https://console.cloud.google.com/apis/credentials)
+2. Create an **OAuth 2.0 Client ID**.
+3. Enable **Google Drive API**.
+4. Set redirect URI to:
+
 
 ##  Workflow Architecture
 ```plaintext
@@ -37,3 +53,6 @@ The workflow uses:
    ├── DELETE  → Confirm & Delete File
    ├── MOVE    → Move File to Target Folder
    └── SUMMARY → Download & Summarize via GPT-4o → Twilio Send
+
+
+
