@@ -13,7 +13,7 @@ OpenAI GPT-4o for summarization
 
 Switch Node for command routing
 
-⚙️ Features
+Features
 WhatsApp-based file management
 
 Automatic command parsing
@@ -33,10 +33,9 @@ Google Drive API
 
 OpenAI API (GPT-4o)
 
-📂 Workflow Architecture
+ Workflow Architecture
 plaintext
-Copy
-Edit
+
 [Webhook]
     ↓
 [Function: Parse Command]
@@ -47,14 +46,14 @@ Edit
  ├── MOVE → Move File to Target Folder
  └── SUMMARY → Download & Summarize via GPT-4o → Twilio Send
   Setup Instructions
-1️⃣ Twilio WhatsApp Sandbox
+ Twilio WhatsApp Sandbox
 Visit: https://www.twilio.com/console/sms/whatsapp/sandbox
 
 Join the sandbox by sending the join keyword to the Twilio number.
 
 Save Account SID and Auth Token.
 
-2️⃣ Google Drive API
+ Google Drive API
 Go to: https://console.cloud.google.com/apis/credentials
 
 Create an OAuth 2.0 Client ID.
@@ -63,9 +62,7 @@ Enable Google Drive API.
 
 Set redirect URI:
 
-bash
-Copy
-Edit
+
 https://n8n.io/oauth2-credential/callback
 Save Client ID and Client Secret.
 
